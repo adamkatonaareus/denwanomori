@@ -15,7 +15,7 @@ OP_LED_PIN = 14
 SCAN_SLEEP = 0.1
 
 # Returning numpad result after this cycles of scanning.
-SCAN_TIMEOUT = 10
+SCAN_TIMEOUT = 3
 
 # Invert numpad pins?
 INVERT_KEYS = True

@@ -30,13 +30,17 @@ class Player:
 		self.log.debug("Hang up/retry while playing audio.")
 		time.sleep(0.5)
 		pygame.mixer.music.stop()
-		return
+		return False
+
+	return True
+
 
     def playFileAsync(self, filename):
 
 	self.log.debug("Playing file " + filename)
 	pygame.mixer.music.load(filename)
 	pygame.mixer.music.play()
+
 
     def preload(self, filename):
 

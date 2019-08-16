@@ -37,20 +37,17 @@ class NumPad:
     #
     # Method that listens to one keypress.
     #
-    def getKey(self):
+    def getKeyIndex(self):
 
-        key = 0
+        keyIndex = (-1, -1)
 
 	for col_num, col_pin in enumerate(self.cols):
 	    GPIO.output(col_pin, 1)
 	    for row_num, row_pin in enumerate(self.rows):
 		if GPIO.input(row_pin):
-		    if (CONSTS.INVERT_KEYS):
-			key = self.keys[3-row_num][2-col_num]
-		    else:
-			key = self.keys[row_num][col_num]
+		    keyIndex = (row_num, col_num)
 	    GPIO.output(col_pin, 0)
-	return key
+	return keyIndex
 
     #
     # Method that waits for a number of keypresses so a number larger than 9 can be selected.
@@ -64,12 +61,23 @@ class NumPad:
 	self.log.debug("Waiting for numpad entry...")
 
 	while True:
-	    key = self.getKey()
-	    if key :
+
+	    keyIndex = self.getKeyIndex()
+
+	    if keyIndex <> (-1, -1) :
+
+		# Beep!
+		self.player.playFileAsync(CONSTS.AUDIO_PATH + "beep.wav")
+
+		#FIX KA 20190816: wait until keyUp
+		newKeyIndex = keyIndex
+		while (newKeyIndex <> (-1, -1)):
+		    newKeyIndex = self.getKeyIndex()
+
+		key = self.getKey(keyIndex)
 		self.log.debug("\tKey pressed: " + key)
 		selected += key
 		cycle = 0
-		self.player.playFileAsync(CONSTS.AUDIO_PATH + "beep.wav")
 
 		# Limit length so we will eventually return something
 		if (len(selected) >= CONSTS.MAX_SELECTION_LENGTH):
@@ -84,8 +92,14 @@ class NumPad:
 		return ""
 
 	    # Return selection after a bit of waiting
-	    if (cycle > CONSTS.SCAN_TIMEOUT and selected > ""):
+	    if (cycle * CONSTS.SCAN_SLEEP >= CONSTS.SCAN_TIMEOUT and selected > ""):
 		return selected
 
+    def getKey(self, keyIndex):
+
+	if (CONSTS.INVERT_KEYS):
+	    return self.keys[3-keyIndex[0]][2-keyIndex[1]]
+	else:
+	    return self.keys[keyIndex[0]][keyIndex[1]]
 
 

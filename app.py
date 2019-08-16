@@ -49,7 +49,10 @@ while True:
 		filename = CONSTS.AUDIO_PATH + selectedNo + ".mp3"
 
 		if (os.path.isfile(filename)):
-			player.playFile(filename)
+			if (player.playFile(filename) == True):
+				time.sleep(1)
+				player.playFile(CONSTS.AUDIO_PATH + "outro.mp3")
+				time.sleep(1)
 		else:
 			player.playFile(CONSTS.AUDIO_PATH + "wrong.wav")
 
