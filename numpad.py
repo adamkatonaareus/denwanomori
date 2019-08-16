@@ -1,12 +1,13 @@
 import RPi.GPIO as GPIO
 import time
+import player
+import consts as CONSTS
+import log4p
 
 class NumPad:
 
-    scanSleep = 0.2
-    scanTimeout = 10
-    hangupPin = 4
-    invertKeys = True
+    player = None
+    log = None
 
     rows = [17, 25, 24, 23]
     cols = [27, 18, 22]
@@ -19,20 +20,19 @@ class NumPad:
     #
     # Configure GPIO
     #
-    def __init__(self):
+    def __init__(self, playerInstance):
 
-	print("Initializing NumPad...")
+	logger = log4p.GetLogger(__name__, config=CONSTS.LOG4P_CONFIG)
+	self.log = logger.logger
 
-        GPIO.setmode(GPIO.BCM)
+	self.log.debug("Initializing NumPad...")
+	self.player = playerInstance;
 
 	for row_pin in self.rows:
 	    GPIO.setup(row_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 	for col_pin in self.cols:
 	    GPIO.setup(col_pin, GPIO.OUT)
-
-	# Hangup pin
-        GPIO.setup(self.hangupPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     #
     # Method that listens to one keypress.
@@ -45,7 +45,7 @@ class NumPad:
 	    GPIO.output(col_pin, 1)
 	    for row_num, row_pin in enumerate(self.rows):
 		if GPIO.input(row_pin):
-		    if (self.invertKeys):
+		    if (CONSTS.INVERT_KEYS):
 			key = self.keys[3-row_num][2-col_num]
 		    else:
 			key = self.keys[row_num][col_num]
@@ -59,25 +59,32 @@ class NumPad:
 
         selected = ""
         cycle = 0
+	#self.player.preload("audio/beep.wav")
 
-	print("Waiting for numpad entry...")
+	self.log.debug("Waiting for numpad entry...")
 
 	while True:
 	    key = self.getKey()
 	    if key :
-		print("\tKey pressed: " + key)
+		self.log.debug("\tKey pressed: " + key)
 		selected += key
 		cycle = 0
-	    time.sleep(self.scanSleep)
+		self.player.playFileAsync(CONSTS.AUDIO_PATH + "beep.wav")
+
+		# Limit length so we will eventually return something
+		if (len(selected) >= CONSTS.MAX_SELECTION_LENGTH):
+		    return selected
+
+	    time.sleep(CONSTS.SCAN_SLEEP)
 	    cycle += 1
 
 	    # Check hangup key, stop if pressed
-	    if (GPIO.input(self.hangupPin) == False):
-		print("\tHangup.")
+	    if (GPIO.input(CONSTS.HANGUP_PIN) == True):
+		self.log.debug("\tHangup.")
 		return ""
 
 	    # Return selection after a bit of waiting
-	    if (cycle > self.scanTimeout and selected > ""):
+	    if (cycle > CONSTS.SCAN_TIMEOUT and selected > ""):
 		return selected
 
 
