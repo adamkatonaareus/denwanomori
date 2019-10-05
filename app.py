@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import numpad
 import player
+import rest
 import time
 import consts as CONSTS
 import log4p
@@ -22,6 +23,7 @@ GPIO.setup(CONSTS.HANGUP_PIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 player = player.Player()
 np = numpad.NumPad(player)
+restLog = rest.RestLog()
 
 # Wait for user to lift handle
 log.debug("Waiting for lift up...")
@@ -33,7 +35,7 @@ while True:
 	if (GPIO.input(4) == False):
     
 	    log.info("Lift up, playing intro.")
-	    time.sleep(0.5)
+	    time.sleep(0.1)
 	    player.playFileAsync(CONSTS.AUDIO_PATH + "intro.mp3")
 
 	    # Wait for numpad input
@@ -48,9 +50,10 @@ while True:
 		log.info("Selected: " + selectedNo)
 		filename = CONSTS.AUDIO_PATH + selectedNo + ".mp3"
 
+		restLog.postAsync(selectedNo)
+
 		if (os.path.isfile(filename)):
 			if (player.playFile(filename) == True):
-				time.sleep(1)
 				player.playFile(CONSTS.AUDIO_PATH + "outro.mp3")
 				time.sleep(1)
 		else:
@@ -61,6 +64,9 @@ while True:
 	    else:
 
 		player.stop()
+
+	# Idle wait
+        time.sleep(1)
 
     except KeyboardInterrupt:
 

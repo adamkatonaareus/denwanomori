@@ -24,7 +24,8 @@ INVERT_KEYS = True
 MAX_SELECTION_LENGTH = 3
 
 # Audio source folder
-AUDIO_PATH = "/media/pi/disk/"
+#AUDIO_PATH = "/media/pi/MEDIA/"
+AUDIO_PATH = "/home/pi/denwanomori/media/"
 
 # Logger config
 LOG4P_CONFIG = "/home/pi/denwanomori/log4p.json"
