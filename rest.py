@@ -6,7 +6,7 @@ import consts as CONSTS
 class RestLog:
 
     log = None
-    url = "https://areuskm.azurewebsites.net/denwa-server/rest/entry/4dy895ghorh8f984htfq8hqfphf9d3u9yr43987hfuoiheuihfuo/1/"
+    url = "https://areuskm.azurewebsites.net/denwa-server/rest/entry/" + CONSTS.API_KEY + "/" + str(CONSTS.DEVICE_NO) + "/"
     data = "{}"
 
     def __init__(self):

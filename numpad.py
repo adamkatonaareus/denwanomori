@@ -87,7 +87,7 @@ class NumPad:
 	    cycle += 1
 
 	    # Check hangup key, stop if pressed
-	    if (GPIO.input(CONSTS.HANGUP_PIN) == True):
+	    if (GPIO.input(CONSTS.HANGUP_PIN) == CONSTS.HANG_UP):
 		self.log.debug("\tHangup.")
 		return ""
 

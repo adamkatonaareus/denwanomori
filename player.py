@@ -26,7 +26,7 @@ class Player:
 	while pygame.mixer.music.get_busy() == True:
 	    
 	    # check for hangup or retry
-	    if ((GPIO.input(CONSTS.HANGUP_PIN) == True) or (GPIO.input(CONSTS.RETRY_PIN) == GPIO.LOW)):
+	    if ((GPIO.input(CONSTS.HANGUP_PIN) == CONSTS.HANG_UP) or (GPIO.input(CONSTS.RETRY_PIN) == GPIO.LOW)):
 		self.log.debug("Hang up/retry while playing audio.")
 		time.sleep(0.5)
 		pygame.mixer.music.stop()

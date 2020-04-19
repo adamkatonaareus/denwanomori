@@ -107,3 +107,7 @@ venv.bak/
 *.log
 
 media/
+
+# don't upload settings
+consts.py
+

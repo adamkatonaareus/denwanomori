@@ -40,7 +40,7 @@ AUDIO_PATH = "/home/pi/denwanomori/media/"
 LOG4P_CONFIG = "/home/pi/denwanomori/log4p.json"
 
 # Device No. and REST API key
-DEVICE_NO = 2
-API_KEY = "4dy895ghorh8f984htfq8hqfphf9d3u9yr43987hfuoiheuihfuo"
+DEVICE_NO = 100
+API_KEY = "12345"
 
 

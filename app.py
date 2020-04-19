@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import numpad
+import rotary1
 import player
 import rest
 import time
@@ -22,17 +23,23 @@ GPIO.setup(CONSTS.RETRY_PIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(CONSTS.HANGUP_PIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 player = player.Player()
-np = numpad.NumPad(player)
 restLog = rest.RestLog()
+
+# Select dialer implementation.
+if (CONSTS.DIAL_MODE == "numpad"):
+    np = numpad.NumPad(player)
+if (CONSTS.DIAL_MODE == "rotary1"):
+    np = rotary1.Rotary(player)
 
 # Wait for user to lift handle
 log.debug("Waiting for lift up...")
+
 
 while True:
 
     try:
 
-	if (GPIO.input(4) == False):
+	if (GPIO.input(CONSTS.HANGUP_PIN) == CONSTS.LIFT_UP):
     
 	    log.info("Lift up, playing intro.")
 	    time.sleep(0.1)
